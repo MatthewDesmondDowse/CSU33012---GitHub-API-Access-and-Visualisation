@@ -1,0 +1,1 @@
+print("Test script works a OK!");
