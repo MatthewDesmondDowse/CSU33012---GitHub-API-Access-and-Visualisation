@@ -13,10 +13,16 @@ client = pymongo.MongoClient(conn)
 # Create a database
 db = client.classDB
 
-githubuser = db.githubuser.find()
+githubuser = db.githubuser.find() #X
 
-for user in githubuser:
-    pprint.pprint(user)
-    print()
+for user in githubuser: #X
+    pprint.pprint(user) #X
+    print()             #X    
 
 
+## IF I wanted to ensure no null data is retrieved 
+## KEY: X means comment this line out 
+
+# for user in db.githubuser.find({'location': {'$exists': True}}):
+#      pprint.pprint(user)
+#      print()
