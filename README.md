@@ -14,3 +14,9 @@ For visualisation
 
 For Mongo Database
 1)pip install pymongo
+
+General Start
+1) cd to cloned repository
+2) docker-compose up
+3) python3 script.py and paste token
+4) python3 script2.py
