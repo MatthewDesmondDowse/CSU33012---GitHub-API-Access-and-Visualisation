@@ -3,7 +3,7 @@ Repository for module CSU33012 to access data from the GitHub API and to take th
 
 Started in Haskell, but now trying with Python.
 
-Commands to run in Powershell etc:
+Commands to run in command-line :
 
 1) pip install github
 2) pip install PyGitHub
