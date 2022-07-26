@@ -11,3 +11,6 @@ Commands to run in command-line :
 For visualisation
 1) more run-server.sh
 2) python3 -m http.server 8000   (./run-server.sh won't work currently)
+
+For Mongo Database
+1)pip install pymongo
