@@ -17,6 +17,6 @@ For Mongo Database
 
 General Start
 1) cd to cloned repository
-2) docker-compose up
+2) Open Docker and run command docker-compose up
 3) python3 script.py and paste token
 4) python3 script2.py
