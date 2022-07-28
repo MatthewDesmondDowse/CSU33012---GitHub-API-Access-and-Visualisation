@@ -77,8 +77,11 @@ while a == 1:
     print(languages)
     
     languagesNumsIsolated = re.findall(r'-?\d+', languages)  #might be useful later
+    languagesNumsIsolatedLength = len(languagesNumsIsolated)
+    print("Number of languages = " , languagesNumsIsolatedLength)
     totalBytes = sum(int(a) for a in re.findall(r'\d+', languages))
-    print(totalBytes)
+    print("Total Bytes = " , totalBytes)
+
      
     continue
 
