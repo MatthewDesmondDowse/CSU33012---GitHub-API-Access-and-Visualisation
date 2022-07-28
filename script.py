@@ -9,6 +9,7 @@ import pymongo
 import os
 import requests
 import pprint
+import re
 
 
 from faker import Faker
@@ -67,13 +68,18 @@ for repo in user.get_repos():
     
 a = 1
 while a == 1:   
-    repoName = input("Enter name of repo to find language breakdown: ")
+    repoName = input("Enter name of repo to find language breakdown in bytes: ")
     url = "https://api.github.com/repos/{}/{}/languages".format(user.login, repoName)
     languages = requests.get(url).text
     removechar='{ " }'
     for character in removechar:
         languages=languages.replace(character,"")    
     print(languages)
+    
+    languagesNumsIsolated = re.findall(r'-?\d+', languages)  #might be useful later
+    totalBytes = sum(int(a) for a in re.findall(r'\d+', languages))
+    print(totalBytes)
+     
     continue
 
 # followercount = user.followers
