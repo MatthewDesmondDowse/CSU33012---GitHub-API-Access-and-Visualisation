@@ -69,8 +69,11 @@ a = 1
 while a == 1:   
     repoName = input("Enter name of repo to find language breakdown: ")
     url = "https://api.github.com/repos/{}/{}/languages".format(user.login, repoName)
-    print(requests.get(url).text)
-    
+    languages = requests.get(url).text
+    removechar='{ " }'
+    for character in removechar:
+        languages=languages.replace(character,"")    
+    print(languages)
     continue
 
 # followercount = user.followers
