@@ -101,7 +101,7 @@ dct = {'Repository name': repoName,
        }
 print("Dictionary is" + json.dumps(dct))
 
-db.gitubuser.insert_many([dct])
+db.githubuser.insert_many([dct])
 # followercount = user.followers
 # print("followers: " + str(followercount))
 
