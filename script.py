@@ -65,32 +65,43 @@ db.githubuser.insert_many([dct])
 
 for repo in user.get_repos():
     print(repo.full_name)
+    ##store to db name here 
     
 a = 1
 removechar='{"}'
-while a == 1:   
-    repoName = input("Enter name of repo to find language breakdown in bytes: ")
-    url = "https://api.github.com/repos/{}/{}/languages".format(user.login, repoName)
-    languages = requests.get(url).text
+finalPercentages = []
+   
+repoName = input("Enter name of repo to find language breakdown in bytes. ")
+url = "https://api.github.com/repos/{}/{}/languages".format(user.login, repoName)
+languages = requests.get(url).text
     
-    for character in removechar:
-        languages=languages.replace(character,"")    
-    print(languages)
+for character in removechar:
+    languages=languages.replace(character,"")    
+print(languages)
     
-    languagesNumsIsolated = re.findall(r'-?\d+', languages)  #might be useful later
-    print(languagesNumsIsolated)
-    numOfLanguages = len(languagesNumsIsolated)
-    print("Number of languages = " , numOfLanguages)
+languagesNumsIsolated = re.findall(r'-?\d+', languages)  #might be useful later
+print(languagesNumsIsolated)
+numOfLanguages = len(languagesNumsIsolated)
+print("Number of languages = " , numOfLanguages)
     
-    totalBytes = sum(int(a) for a in re.findall(r'\d+', languages))
-    print("Total Bytes = " , totalBytes)
+totalBytes = sum(int(a) for a in re.findall(r'\d+', languages))
+print("Total Bytes = " , totalBytes)
     
-    for i in range(numOfLanguages):
-        x = languagesNumsIsolated[i]
-        x = (int(x)/totalBytes) * 100
-        print("Percentage is " , x ,"%")
-    continue
+for i in range(numOfLanguages):
+    x = languagesNumsIsolated[i]
+    x = (int(x)/totalBytes) * 100
+    finalPercentages.insert(i,x)
+    print("Percentage breakdown is" ,x,"%")
+    print(finalPercentages)
+    
+dct = {'Repository name': repoName,
+       'Languages': languages,
+       'Number of Languages' : numOfLanguages,
+       'List of percentages' : finalPercentages
+       }
+print("Dictionary is" + json.dumps(dct))
 
+db.gitubuser.insert_many([dct])
 # followercount = user.followers
 # print("followers: " + str(followercount))
 
