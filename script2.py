@@ -48,9 +48,10 @@ db = client.classDB
 
 
 with open('data.csv', 'w') as f:
-    f.write('User,RepoCount\n')
-    dct = db.githubuser.find({'user': {'$exists': True}})
+    f.write('User, and their Repository language breakdown\n')
+    dct = db.githubuser.find()
     for user in dct:
         pprint.pprint(user)
-        print()
-        f.write(user['user'] + ',' + str(user['public_repos']) + '\n')     
+        print() #prints a blank line?
+        f.write('%s\n' % (user))
+            
