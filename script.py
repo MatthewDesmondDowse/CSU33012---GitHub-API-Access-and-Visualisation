@@ -67,22 +67,28 @@ for repo in user.get_repos():
     print(repo.full_name)
     
 a = 1
+removechar='{"}'
 while a == 1:   
     repoName = input("Enter name of repo to find language breakdown in bytes: ")
     url = "https://api.github.com/repos/{}/{}/languages".format(user.login, repoName)
     languages = requests.get(url).text
-    removechar='{ " }'
+    
     for character in removechar:
         languages=languages.replace(character,"")    
     print(languages)
     
     languagesNumsIsolated = re.findall(r'-?\d+', languages)  #might be useful later
-    languagesNumsIsolatedLength = len(languagesNumsIsolated)
-    print("Number of languages = " , languagesNumsIsolatedLength)
+    print(languagesNumsIsolated)
+    numOfLanguages = len(languagesNumsIsolated)
+    print("Number of languages = " , numOfLanguages)
+    
     totalBytes = sum(int(a) for a in re.findall(r'\d+', languages))
     print("Total Bytes = " , totalBytes)
-
-     
+    
+    for i in range(numOfLanguages):
+        x = languagesNumsIsolated[i]
+        x = (int(x)/totalBytes) * 100
+        print("Percentage is " , x ,"%")
     continue
 
 # followercount = user.followers
