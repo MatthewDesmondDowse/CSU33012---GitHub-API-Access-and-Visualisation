@@ -1,8 +1,13 @@
 print("Demonstration python based mongodb access");
 
 
+from ntpath import join
+
 import pymongo              # for mongodb access
 import pprint               # for pretty printing db data
+import csv
+
+from itertools import zip_longest
 
 #Let's get the user object from the db
 
@@ -13,45 +18,25 @@ client = pymongo.MongoClient(conn)
 # Create a database
 db = client.classDB
 
-# githubuser = db.githubuser.find() #X
-
-# for user in githubuser: #X
-#     pprint.pprint(user) #X
-#     print()             #X    
-
-
-# ## IF I wanted to ensure no null data is retrieved 
-# ## KEY: X means comment this line out 
-
-# for user in db.githubuser.find({'user': {'$exists': True}}):
-#      pprint.pprint(user)
-#      print()
-     
-
-# now that we have data we want to generate an output that works for a visualisation
-# I'm going to generate a simple bar chart that shows a count of public repos of each
-# user in the database. Note that this isn't a great example of a visualisation of
-# inteeresting data, but it's good enough for the purpose of demonstrating how to
-# complete the link between data gathering and data visualisation.
-
-# First let's describe the data structure our visualisation needs. Look to index.html
-# for the code that uses it.
-
-# I've previously discussed the use of json data and i recommend generating and transmitting data in json format.
-# However because this example is so simple, I'm goign to write the data set out in csv format
-# It will look like this:
-#           User, Repo Count
-#           Ben,12
-#           Bill,2
-#           Jack,34
-#           Jill 50
 
 
 with open('data.csv', 'w') as f:
-    f.write('User, and their Repository language breakdown\n')
+    
     dct = db.githubuser.find()
-    for user in dct:
+    
+    for user in dct: 
         pprint.pprint(user)
-        print() #prints a blank line?
-        f.write('%s\n' % (user))
-            
+    
+        line = user['Languages']
+        line2 = user['Bytes_per_Language']
+        
+        # result = list(zip(line,line2))
+        # print(result)
+        # np.savetxt("data.csv",result, delimiter=" ", fmt ='% s')
+        
+        data = [line, line2]
+        export_data = zip_longest(*data, fillvalue = '')
+        with open('data.csv', 'w', encoding="ISO-8859-1", newline='') as f:
+            write = csv.writer(f)
+            write.writerow(("Languages", "Bytes_per_Language"))
+            write.writerows(export_data)
