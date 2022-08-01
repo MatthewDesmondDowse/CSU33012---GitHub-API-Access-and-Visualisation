@@ -1,17 +1,13 @@
 #this script accesses the GitHub API
 
 #import Github from the PyGithub library
+#from curses.ascii import isdigit
 from urllib.request import urlopen
-import webbrowser
 from github import Github   #GitHub API access
 import json                 
 import pymongo  
-import os
 import requests
-import pprint
 import re
-
-
 from faker import Faker
 from collections import defaultdict
 faker = Faker()
@@ -25,33 +21,6 @@ g = Github(token)
 
 user = g.get_user()
 
-# print("user: " + user.login)
-
-# #will now work if location field is empty on GitHub profile
-# if user.location is not None:
-#      print("location: " + user.location)
-
-dct = {'user': names[user.login].replace(" ", ""), 
-       'fullname' : names[user.name],
-       'location': user.location,
-       'company': user.company,
-       'public_repos': user.public_repos,
-       'created_at' : str(user.created_at),
-       'updated_at' : str(user.updated_at)
-       }
-
-print ("dictionary is " + json.dumps(dct))
-
-
-#Storing dictionary into a Mongo Database
-
-#Remove null fields
-for k, v in dict(dct).items():
-    if v is None:
-        del dct[k]
-        
-print("Cleaned dictionary is " + json.dumps(dct))
-
 #Establish connection
 conn = "mongodb://localhost:27017"
 client = pymongo.MongoClient(conn)
@@ -59,64 +28,54 @@ client = pymongo.MongoClient(conn)
 #Create a Database
 db = client.classDB
 
-db.githubuser.insert_many([dct])
-
-##demo
-
 for repo in user.get_repos():
     print(repo.full_name)
     ##store to db name here 
     
 a = 1
-removechar='{"}'
+removechar='{"}:,'
 finalPercentages = []
-   
+  
+#gets URL for language breakdown in bytes   
 repoName = input("Enter name of repo to find language breakdown in bytes. ")
 url = "https://api.github.com/repos/{}/{}/languages".format(user.login, repoName)
 languages = requests.get(url).text
-    
+ 
+#removes { } and : from json     
 for character in removechar:
     languages=languages.replace(character,"")    
-print(languages)
-    
-languagesNumsIsolated = re.findall(r'-?\d+', languages)  #might be useful later
-print(languagesNumsIsolated)
-numOfLanguages = len(languagesNumsIsolated)
+print("JSON without { , } , and : " , languages)
+
+#seperate numbers(bytes) from data     
+bytesPerLanguage = re.findall(r'-?\d+', languages)  
+print("List of bytes" , bytesPerLanguage)
+
+#find total number of languages
+numOfLanguages = len(bytesPerLanguage)
 print("Number of languages = " , numOfLanguages)
     
+#find total number of bytes    
 totalBytes = sum(int(a) for a in re.findall(r'\d+', languages))
 print("Total Bytes = " , totalBytes)
-    
+
+#find the percentage breakdown    
 for i in range(numOfLanguages):
-    x = languagesNumsIsolated[i]
+    x = bytesPerLanguage[i]
     x = (int(x)/totalBytes) * 100
     finalPercentages.insert(i,x)
-    print("Percentage breakdown is" ,x,"%")
-    print(finalPercentages)
+    print("Percentage breakdown is" ,x,"%") #prints a percentage
+    print(finalPercentages) #prints list of percentages
+
+    
+listOfLanguages = re.findall(r'-?\D+', languages)
+print("List of languages: " , listOfLanguages)   
     
 dct = {'Repository name': repoName,
-       'Languages': languages,
+       'Languages': listOfLanguages,
        'Number of Languages' : numOfLanguages,
+       'Bytes_per_Language'  : bytesPerLanguage,
        'List of percentages' : finalPercentages
        }
 print("Dictionary is" + json.dumps(dct))
 
 db.githubuser.insert_many([dct])
-# followercount = user.followers
-# print("followers: " + str(followercount))
-
-# followercount = user.get_followers()
-
-# for f in followercount:
-#     dct = {'user': names[f.login].replace(" ", ""),
-#            'fullname': names[f.name],
-#            'location': f.location,
-#            'company': f.company,
-#            'public_repos': f.public_repos
-#           }
-#     for k, v in dict(dct).items():
-#         if v is None:
-#             del dct[k]
-                
-#     print("follower: " + json.dumps(dct))
-#     db.githubuser.insert_many([dct])
