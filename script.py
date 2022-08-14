@@ -2,6 +2,7 @@
 
 #import Github from the PyGithub library
 #from curses.ascii import isdigit
+from datetime import datetime
 from urllib import response
 from urllib.request import urlopen
 from github import Github   #GitHub API access
@@ -9,6 +10,7 @@ import json
 import pymongo  
 import requests
 import re
+import datetime
 from faker import Faker
 from collections import defaultdict
 faker = Faker()
@@ -29,17 +31,24 @@ client = pymongo.MongoClient(conn)
 db = client.classDB
 
 #create list to store all contributors of d3 repo
-contributors = []
-    
+contributors = []  
 contributors_Url = f"https://api.github.com/repos/d3/d3/contributors"    
 response = requests.get(contributors_Url)
 data = response.json()
 
-for repo in data:
-    contributors.insert(1,repo["login"])
+for repoC in data:
+    contributors.insert(1,repoC["login"])
 
 print(contributors , len(contributors))   
+
+#Get creation date
+d3_url = f"https://api.github.com/repos/d3/d3"
+response = requests.get(d3_url)
+data = response.json()
+
+created_date = data["created_at"]
     
+print(created_date)        
 
 
 
