@@ -6,12 +6,17 @@ https://bitbucket.org/esjmb/csu33012-python-github/src/master/
 
 Started in Haskell, but now trying with Python.
 
+Updated title: Construct a software system to automate the generation of a pie charts showing the total lines of code contribution of all contributors to the GitHub repository “d3/d3”, divided by month over the lifetime of the project
+
 In its current state, .sh files won't work from command line,
 Code currently takes a users GitHub token from commandline,
 Takes the data from GitHub and stores it in MongoDB via Docker,
 Then code retrieves that information and creates a csv,
 This csv is then graphed locally at http://localhost:8000/ using d3.
 Still very basic and simple example from tutorial. 
+
+Issues with API access exist in current state as d3 repo is large
+
 
 Commands to run in command-line :
 
