@@ -15,7 +15,9 @@ Then code retrieves that information and creates a csv,
 This csv is then graphed locally at http://localhost:8000/ using d3.
 Still very basic and simple example from tutorial. 
 
-Issues with API access exist in current state as d3 repo is large
+Issues with API access exist in current state as d3 repo is large.
+Also currently no way of getting lines of code via GitHub API.
+Aim is to get number of changes of code (Additions and deletions of code) per commit by a user in a given month.
 
 
 Commands to run in command-line :
