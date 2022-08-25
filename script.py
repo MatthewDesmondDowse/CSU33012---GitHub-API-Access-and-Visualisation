@@ -20,6 +20,7 @@ names = defaultdict(faker.name)
 # # I have put "token" here to not leave any trace of personal tokens
 
 token = input("Paste your token to continue ")
+username = input("Paste your username to continue ")
 
 g = Github(token)
 
@@ -31,47 +32,18 @@ client = pymongo.MongoClient(conn)
 db = client.classDB
 
 #####################################################################
-#create list to store all NAMES OF CONTRIBUTORS of d3 repo
-contributors = []  
-contributors_Url = f"https://api.github.com/repos/d3/d3/contributors?per_page=100"    
-response = requests.get(contributors_Url)
-data = response.json()
-
-for repoC in data:
-    contributors.insert(0,repoC["login"])
-
-#GitHub only shows 100 contributors per page so we have to go to second page
-#we know d3 has 123 contributors from GitHub,
-#This counts 120, possible deleted accounts    
-contributors_Url_page2 =f"https://api.github.com/repos/d3/d3/contributors?page=2&per_page=100"    
-response = requests.get(contributors_Url_page2)
-data2 = response.json()
-
-for repoC in data2:
-    contributors.insert(0,repoC["login"])
-
-print(contributors , len(contributors))   
-
-######################################################################
-#Get CREATION DATE
-d3_url = f"https://api.github.com/repos/d3/d3"
-response = requests.get(d3_url)
-data3 = response.json()
-
-created_date = data3["created_at"]
-    
-print(created_date)  
-
-#####################################################################
 #Get SHA COMMIT HISTORY  
 #From my own manual testing with URL queries I know there are 
 #44 pages of commits when the page displays 100 commits per page   
+
+#CHANGE TO PER_PAGE=30 FOR TESTING
+
 i = 1
 sha_list = []
-commits_url =f"https://api.github.com/repos/d3/d3/commits?per_page=100&page={i}"
+commits_url =f"https://api.github.com/repos/d3/d3/commits?per_page=30&page={i}"
 
 while i <=1 :   #change to 45 later on, issues with api access 
-    response = requests.get(commits_url)
+    response = requests.get(commits_url, auth=(username,token))
     data4 = response.json()
 
     for sha in data4:
@@ -79,31 +51,96 @@ while i <=1 :   #change to 45 later on, issues with api access
 
     i = i +1
 
-print(sha_list, len(sha_list))
+#print(sha_list, len(sha_list))
 
 ###################################################################
 
 #Take list of sha and search for each url with sha,
 #take login name, date comitted, and number of changes made
+# 4 lists, list 1 of everything in order or date, login, total changes, 
+# list 2 of just dates
+# list 3 of just login names
+# list 4 of just total changes
 
-# commit_info = []
-# commit_info_url ="https://api.github.com/repos/d3/d3/commits/" 
-# for t in sha_list:
-#     response = requests.get(f"{commit_info_url}/{t}")
-#     data5 = response.json()
-#     print(f"{commit_info_url}/{t}")
-#     for x in data5:
-#         commit_info.insert(0,x["login"])
-#         for y in data5:
-#             commit_info.insert(0,x["date"])
-#             for z in data5:
-#                 commit_info.insert(0,x["changes"])
+commit_info = []
+commit_info_url ="https://api.github.com/repos/d3/d3/commits" 
 
-# print(commit_info)
+commit_dates = []
+commit_login = []
+commit_total_changes = []
+
+for t in sha_list:
+    temp_url = f"{commit_info_url}/{t}"
+    response = requests.get(temp_url, auth=(username,token))
+    data5 = response.json()
+    #print(temp_url)
+    commit_info.append(data5['commit']['author']['date'])
+    commit_info.append(data5['author']['login'])
+    commit_info.append(data5['stats']['total'])
+    #print(commit_info)
+    commit_dates.append(data5['commit']['author']['date'])
+    commit_login.append(data5['author']['login'])
+    commit_total_changes.append(data5['stats']['total'])
+
 ####################################################################
 
+#store info in a dictionary and then into database
 
-###-----------------------------------###    
+dct = {'All Commit Info' : commit_info,
+       'Commit Dates' : commit_dates,
+       'Commit Logins' : commit_login,
+       'Total Changes per Commit' : commit_total_changes
+       }
+
+print("Dictionary is" + json.dumps(dct))
+
+db.githubuser.insert_many([dct])
+
+#####################################################################
+
+#SOME HELPER FUNCTIONS I MADE PREVIOUSLY, COULD BE USEFUL...
+
+#create list to store all NAMES OF CONTRIBUTORS of d3 repo
+
+# #CHANGE TO PER_PAGE=30 FOR TESTING
+# contributors = []  
+# contributors_Url = f"https://api.github.com/repos/d3/d3/contributors?per_page=30"    
+# response = requests.get(contributors_Url)
+# data = response.json()
+
+# for repoC in data:
+#     contributors.insert(0,repoC["login"])
+
+# # #GitHub only shows 100 contributors per page so we have to go to second page
+# # #we know d3 has 123 contributors from GitHub,
+# # #This counts 120, possible deleted accounts    
+
+# # #CHANGE TO PER_PAGE=30 FOR TESTING
+# # contributors_Url_page2 =f"https://api.github.com/repos/d3/d3/contributors?page=2&per_page=30"    
+# # response = requests.get(contributors_Url_page2)
+# # data2 = response.json()
+
+# # for repoC in data2:
+# #     contributors.insert(0,repoC["login"])
+
+# print(contributors , len(contributors))   
+
+######################################################################
+# #Get CREATION DATE
+# d3_url = f"https://api.github.com/repos/d3/d3"
+# response = requests.get(d3_url)
+# data3 = response.json()
+
+# created_date = data3["created_at"]
+    
+# print(created_date)  
+
+
+##############################################################################################################
+
+
+
+###-----------OLD CODE FOR OLD IDEA---------------------###    
 # a = 1
 # removechar='{"}:,'
 # finalPercentages = []
@@ -151,3 +188,4 @@ print(sha_list, len(sha_list))
 # print("Dictionary is" + json.dumps(dct))
 
 # db.githubuser.insert_many([dct])
+
