@@ -86,10 +86,10 @@ for t in sha_list:
 
 #store info in a dictionary and then into database
 
-dct = {'All Commit Info' : commit_info,
-       'Commit Dates' : commit_dates,
-       'Commit Logins' : commit_login,
-       'Total Changes per Commit' : commit_total_changes
+dct = {'All_Commit_Info' : commit_info,
+       'Commit_Dates' : commit_dates,
+       'Commit_Logins' : commit_login,
+       'Total_Changes_per_Commit' : commit_total_changes
        }
 
 print("Dictionary is" + json.dumps(dct))
