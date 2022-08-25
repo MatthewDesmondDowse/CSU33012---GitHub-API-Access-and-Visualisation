@@ -23,18 +23,14 @@ db = client.classDB
 # in smaller data set ensure that a user's total commit cahnges are added together
 # as they can contribute many times in a month
 
-#with open('data.csv', 'w') as f:
+with open('data.csv', 'w') as f:
     
-dct = db.githubuser.find()
+    dct = db.githubuser.find()
 
-for data in dct: 
-    temp = data['All_Commit_Info']
-    print(temp)  
-    
-
-
-
-
+    for data in dct: 
+        #temp = data['All_Commit_Info']
+        #print(temp)  
+        f.write(str(data['All_Commit_Info']))
 #################################
 
 #OLD CODE FOR OLD IDEA
