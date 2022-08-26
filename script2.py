@@ -31,6 +31,28 @@ with open('data.csv', 'w') as f:
         #temp = data['All_Commit_Info']
         #print(temp)  
         f.write(str(data['All_Commit_Info']))
+     
+        
+with open('data2.csv', 'w') as f:
+    
+    dct = db.githubuser.find()
+
+    for data in dct: 
+        f.write(str(data['Commit_Dates']))
+        
+with open('data3.csv', 'w') as f:
+    
+    dct = db.githubuser.find()
+
+    for data in dct: 
+        f.write(str(data['Commit_Logins']))      
+          
+with open('data4.csv', 'w') as f:
+    
+    dct = db.githubuser.find()
+
+    for data in dct: 
+        f.write(str(data['Total_Changes_per_Commit']))   
 #################################
 
 #OLD CODE FOR OLD IDEA
