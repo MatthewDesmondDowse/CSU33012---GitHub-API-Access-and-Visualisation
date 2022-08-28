@@ -1,6 +1,7 @@
 print("Demonstration python based mongodb access");
 
 
+from asyncio.windows_events import NULL
 from ntpath import join
 
 import pymongo              # for mongodb access
@@ -32,29 +33,40 @@ with open('data.csv', 'w') as f:
         #print(temp)  
         f.write(str(data['All_Commit_Info']))
      
-        
-with open('data2.csv', 'w') as f:
-    
+with open('dog2.csv', 'w', newline="") as f:
+    header = ['Commit_Dates']
     dct = db.githubuser.find()
-
-    for data in dct: 
-        f.write(str(data['Commit_Dates']))
+    writer = csv.writer(f)
+    writer.writerow(header)
+    writer.writerows([elt] for elt in data['Commit_Dates'])
         
-with open('data3.csv', 'w') as f:
-    
+with open('data3.csv', 'w', newline="") as f:
+    header = ['Commit_Logins']
     dct = db.githubuser.find()
-
-    for data in dct: 
-        f.write(str(data['Commit_Logins']))      
+    writer = csv.writer(f)
+    writer.writerow(header)
+    writer.writerows([elt] for elt in data['Commit_Logins'])   
           
-with open('data4.csv', 'w') as f:
-    
+with open('data4.csv', 'w', newline="") as f:
+    header = ['Total_Changes_per_Commit']
     dct = db.githubuser.find()
-
-    for data in dct: 
-        f.write(str(data['Total_Changes_per_Commit']))   
+    writer = csv.writer(f)
+    writer.writerow(header)
+    writer.writerows([elt] for elt in data['Total_Changes_per_Commit'])   
+        
+        
 #################################
 
+#CAREFUL THIS CODE MAKES AN ARRAY OF LENGTH 1
+
+# with open('data4.csv', 'w') as f:
+    
+#     dct = db.githubuser.find()
+
+#     for data in dct: 
+#         f.write(str(data['Total_Changes_per_Commit']))  
+ 
+########################################
 #OLD CODE FOR OLD IDEA
 
 # with open('data.csv', 'w') as f:
