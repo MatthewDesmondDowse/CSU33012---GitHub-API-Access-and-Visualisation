@@ -222,7 +222,7 @@
         
       } else if (allDates[i] > startDate && allDates[i] <= endDate) {
         
-        endDateIndex = i;
+        endDateIndex = i+1;
       }
       
     }
@@ -236,7 +236,7 @@
        allLogins = [];
       //convert csvLogins (object) into an array
       allLogins = Object.values(csvLogins);
-      //allLogins = csvLogins.map(function(item){return item['Commit_Logins']});
+      allLogins = csvLogins.map(function(item){return item['Commit_Logins']});
 
       console.log(allLogins)
 
@@ -246,68 +246,111 @@
         allChangesPerCommit = [];
         //convert csvChanges (object) into an array
         allChangesPerCommit = Object.values(csvChanges);
-        //allChangesPerCommit = csvLogins.map(function(item){return item['Commit_Logins']});
+        allChangesPerCommit = csvChanges.map(function(item){return item['Total_Changes_per_Commit']});
+        allChangesPerCommit = allChangesPerCommit.map(str => { return Number(str);})
         console.log(allChangesPerCommit)
 
         //get indexes which are in an array
         //let temp = getIndexes()
-        startDateIndex = temp[0];
-        endDateIndex = temp[1];
+        //startDateIndex = temp[0];
+        //endDateIndex = temp[1];
+
+        //console.log(startDateIndex)
 
         listOfContributorsInMonth = [];
         allLogins = allLogins.slice(startDateIndex, endDateIndex);
         allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex);
+        
+        console.log(allLogins)
+        console.log(allChangesPerCommit)
 
         //convert to set to remove duplicates
         //then get size of this set
         //size of set = number of contributors in month = pieces of pie
         //set3 = list of logins with no duplicates
-        let set3 = [...new Set(allLogins)];
-        numberOfContributorsInMonth = set3.size();
+        let set3 = new Set(allLogins);
+        numberOfContributorsInMonth = set3.size;
+        console.log(set3);
+        console.log(numberOfContributorsInMonth);
 
+        //ABOVE CODE MIGHT NOT WORK
+        //GO THROUGH ALL LOGINS AND REMOVE DUPLICATES AND GET SIZE
+//////
         //create 2d array of logins and total changes (w/ duplicates)
-        let loginAndChanges = {};
-        for (let i = 0; i < data3.length; i++) {
+        //LENGTH COULD BE AN ERROR
+        let loginAndChanges = [];
+        for (let i = 0; i < allLogins.length; i++) {
           loginAndChanges.push([allLogins[i], allChangesPerCommit[i]]);
         }
 
-        //convert set3 back to an array
-        let temp3 = Array.from(set3);
+        console.log(loginAndChanges)
+
         //fill an array with zeros the same length as 
-        let zeroes = new Array(temp.length.fill(0));
-
+        n = set3.size;
+        let zeroes = new Array(n); for(let i=0; i<n;i++) zeroes[i]=0;
+        console.log(zeroes)   
+        
+        arraySet3 = Array.from(set3);
+        console.log(arraySet3)
+        
         //create 2d array of logins with duplicates, paired with 0s
-        let loginAndChangesNoDup = []
-        for (let i = 0; i < temp3.length; i++) {
-          loginAndChangesNoDup.push([temp3[i], zeroes[i]]);
+        loginAndChangesNoDup = [];
+        for (let j = 0; j < arraySet3.length; j++) {
+         loginAndChangesNoDup.push([arraySet3[j] , zeroes[j]]);
+   
         }
+        
+        //incase thers only 1 user who made a commit in a month
+        //avoids making a 1d Array
+        loginAndChangesNoDup.push(["notUser", zeroes["0"]]);
 
+        //returning allLogins doubled?
+        console.log(loginAndChangesNoDup)
+
+        //to get rid of last entry
+        newLength = loginAndChangesNoDup.length -1 
         //compare the two 2d arrays,
         //get duplicates and add them to the nodup version
-        for (var i = 0; i < loginAndChangesNoDup.length; i++) {
+        for (var i = 0; i < newLength; i++) {
 
           for (var j = 0; j < loginAndChanges.length; j++) {
 
             if (loginAndChangesNoDup[i][0] == loginAndChanges[j][0]) {
-              temp = loginAndChanges[j][0];
-              tempAdd = loginAndChangesNoDup[i][0];
-              tempAdd = tempAdd + temp;
-              loginAndChangesNoDup[i][0] = tempAdd;
+              
+              console.log("user found itself")
+              //take only number from 2d array index is 1
+              temp = loginAndChanges[0,j]
+              //console.log(temp)
+              temp = temp.slice(1)
+              temp = temp.toString();
+              temp = parseInt(temp)
+              console.log(temp) //this is number
+              
+              tempAdd = loginAndChangesNoDup[0,i]
+              
+              tempAdd = tempAdd.slice(1)
+              tempAdd = tempAdd.toString();
+              tempAdd = parseInt(tempAdd)
+              console.log(tempAdd)
+
+              tempAdd = tempAdd + temp
+              console.log(tempAdd)
+
+             loginAndChangesNoDup[i][1] = tempAdd
             }
           }
         }
 
-        var loginNames = loginAndChangesNoDup.map(function (tuple) { return tuple[0]; });
-        var totalChangesPerCommiter = loginAndChangesNoDup.map(function (tuple) { return tuple[1]; });
+      var loginNames = loginAndChangesNoDup.map(function (tuple) { return tuple[0]; });
+      var totalChangesPerCommiter = loginAndChangesNoDup.map(function (tuple) { return tuple[1]; });
 
-        var changesData = totalChangesPerCommiter;
-
+    
+      console.log(totalChangesPerCommiter)
       });
     });
 });
+return ("nice")
 }
-
-
 
  //document.write(getDateRange(year,month))    //works
  //document.write(getIndexes(year, month))
