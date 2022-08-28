@@ -7,83 +7,51 @@
 <!-- Color scale -->
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
-
-
-
 <body style="background-color:#c81616;"> </body>
 
-<b style="color:white"> Visualisation of total commits per user, per month in a given year </b>
+<b style="color:white"> Visualisation of total commits per user, per month in a given year in the d3 repository</b>
 
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 
-<!-- Add Year buttons-->
-<div>
-  <button onclick="update(data1)">2010</button>
-  <button onclick="update(data2)">2011</button>
-  <button onclick="setYear(2012)">2012</button>
-  <button onclick="setYear(2013)">2013</button>
-  <button onclick="setYear(2014)">2014</button>
-  <button onclick="setYear(2015)">2015</button>
-  <button onclick="setYear(2016)">2016</button>
-  <button onclick="setYear(2017)">2017</button>
-  <button onclick="setYear(2018)">2018</button>
-  <button onclick="setYear(2019)">2019</button>
-  <button onclick="setYear(2020)">2020</button>
-  <button onclick="setYear(2021)">2021</button>
-  <button onclick="setYear(2022)">2022</button>
-</div>
+<select id="month">
+  <option value="01">January</option>
+  <option value="02">February</option>
+  <option value="03">March</option>
+  <option value="04">April</option>
+  <option value="05">May</option>
+  <option value="06">June</option>
+  <option value="07">July</option>
+  <option value="08">August</option>
+  <option value="09">September</option>
+  <option value="10">October</option>
+  <option value="11">November</option>
+  <option value="12">December</option>
 
-<!-- Add 12 month buttons -->
-<div>
-  <button onclick="setMonth(1)">January</button>
-  <button onclick="setMonth(2)">February</button>
-  <button onclick="setMonth(3)">March</button>
-  <button onclick="setMonth(4)">April</button>
-  <button onclick="setMonth(5)">May</button>
-  <button onclick="setMonth(6)">June</button>
-  <button onclick="setMonth(7)">July</button>
-  <button onclick="setMonth(8)">August</button>
-  <button onclick="setMonth(9)">September</button>
-  <button onclick="setMonth(10)">October</button>
-  <button onclick="setMonth(11)">November</button>
-  <button onclick="setMonth(12)">December</button>
-</div>
+</select>
+
+<select id="year">
+  <option value="2010">2010</option>
+  <option value="2011">2011</option>
+  <option value="2012">2012</option>
+  <option value="2013">2013</option>
+  <option value="2014">2014</option>
+  <option value="2015">2015</option>
+  <option value="2016">2016</option>
+  <option value="2017">2017</option>
+  <option value="2018">2018</option>
+  <option value="2019">2019</option>
+  <option value="2020">2020</option>
+  <option value="2021">2021</option>
+  <option value="2022">2022</option>
+
+</select>
+
+<button onclick="getIndexes(document.getElementById('year').value,document.getElementById('month').value)">Get Pie
+  Chart</button>
 
 <script>
 
-    //isolate data set for year
-  //initialise at 2010
-  function setYear(x) {
-    if (setYear(x) = 2010) year = "2010"
-    else if (setYear(x) = 2011) year = "2011"
-    else if (setYear(x) = 2012) year = "2012"
-    else if (setYear(x) = 2013) year = "2013"
-    else if (setYear(x) = 2014) year = "2014"
-    else if (setYear(x) = 2015) year = "015"
-    else if (setYear(x) = 2016) year = "2016"
-    else if (setYear(x) = 2017) year = "2017"
-    else if (setYear(x) = 2018) year = "2018"
-    else if (setYear(x) = 2019) year = "2019"
-    else if (setYear(x) = 2020) year = "2020"
-    else if (setYear(x) = 2021) year = "2021"
-    else if (setYear(x) = 2022) year = "2022"
-  }
-
-  function setMonth(y) {
-    if (setMonth(y) = 1) month = "01"
-    else if (setMonth(y) = 2) month = "02"
-    else if (setMonth(y) = 3) month = "03"
-    else if (setMonth(y) = 4) month = "04"
-    else if (setMonth(y) = 5) month = "05"
-    else if (setMonth(y) = 6) month = "06"
-    else if (setMonth(y) = 7) month = "07"
-    else if (setMonth(y) = 8) month = "08"
-    else if (setMonth(y) = 9) month = "09"
-    else if (setMonth(y) = 10) month = "10"
-    else if (setMonth(y) = 11) month = "11"
-    else if (setMonth(y) = 12) month = "12"
-  }
 
   function getDateRange(x, y) {
     var year = x;
@@ -111,7 +79,6 @@
   }
 
   /////////////////////////////////////////////////////////////////////////////
-
   // set the dimensions and margins of the graph
   var width = 450
   height = 450
@@ -134,226 +101,232 @@
 
   // set the color scale
   var color = d3.scaleOrdinal()
-    .domain(["a", "b", "c", "d", "e", "f"])
-    .range(d3.schemeDark2);
+  .domain(["a", "b", "c", "d", "e", "f"]) 
+  .range(d3.schemeDark2);
 
-  // A function that create / update the plot for a given variable:
-  function update(data) {
-
-    // Compute the position of each group on the pie:
-    var pie = d3.pie()
-      .value(function (d) { return d.value; })
-      .sort(function (a, b) { console.log(a); return d3.ascending(a.key, b.key); }) // This make sure that group order remains the same in the pie chart
-    var data_ready = pie(d3.entries(data))
-
-    // map to data
-    var u = svg.selectAll("path")
-      .data(data_ready)
-
-    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-    u
-      .enter()
-      .append('path')
-      .merge(u)
-      .transition()
-      .duration(1000)
-      .attr('d', d3.arc()
-        .innerRadius(0)
-        .outerRadius(radius)
-      )
-      .attr('fill', function (d) { return (color(d.data.key)) })
-      .attr("stroke", "white")
-      .style("stroke-width", "2px")
-      .style("opacity", 1)
-
-    // remove the group that is not present anymore
-    u
-      .exit()
-      .remove()
-
-  }
-//////////////////////////////////////////////////////////////////
-  // Initialize the plot with the first dataset
-  update(data1)
-  var year = "2022";
-  var month = "06";
-
- 
-
- 
-  function getIndexes(x, y) {
-  //gets data set 2 which only holds the dates
-  d3.csv("http://localhost:8000/data2.csv", function (csvDates) {
-
-    allDates = Object.values(csvDates); //this includes header
-    allDates = csvDates.map(function(item){return item['Commit_Dates']}); //removes header
-    console.log(allDates)
-    
-    let temp = getDateRange(x, y); //x and y that was passed in getIndexes
-    startDate = temp[0];
-    endDate = temp[1];
-
-    startIndexFound = false;
-    startDate = new Date(startDate);
-    endDate = new Date(endDate);
-    startDate = startDate.toISOString();
-    endDate = endDate.toISOString();
-
-    startDateIndex = 0;
-    endDateIndex = 0;
-
-    //get index of first date in month, and index of last date in month
-    //from list of dates. Then use both those indexes as indexes for
-    //the other two lists as they share lengths. 
-
-    //console.log(allDates.length)
-    //console.log(allDates[0])
-
-    //date = new Date("2022-07-03")
-    //date = date.toISOString();
-    //console.log(date)
-
-    
-    for (let i = 0; i < allDates.length; i++) {
-
-      if (allDates[i] >= startDate && startIndexFound == false && allDates[i] <= endDate) { //or error here
-        startDateIndex = i;
-        startIndexFound = true;
-        
-      } else if (allDates[i] > startDate && allDates[i] <= endDate) {
-        
-        endDateIndex = i+1;
-      }
-      
-    }
-    //console.log(startDateIndex, endDateIndex);
-    //return [startDateIndex, endDateIndex];
   
 
-    //data set of logins that made commits includes duplicates
-    d3.csv("http://localhost:8000/data3.csv", function (csvLogins) {
+  function getIndexes(x, y) {
+ 
+    //gets data set 2 which only holds the dates
+    d3.csv("http://localhost:8000/data2.csv", function (csvDates) {
 
-       allLogins = [];
-      //convert csvLogins (object) into an array
-      allLogins = Object.values(csvLogins);
-      allLogins = csvLogins.map(function(item){return item['Commit_Logins']});
+      allDates = Object.values(csvDates); //this includes header
+      allDates = csvDates.map(function (item) { return item['Commit_Dates'] }); //removes header
+      console.log(allDates)
 
-      console.log(allLogins)
+      let temp = getDateRange(x, y); //x and y that was passed in getIndexes
+      startDate = temp[0];
+      endDate = temp[1];
 
-      //data set of just total changes per commit
-      d3.csv("http://localhost:8000/data4.csv", function (csvChanges) {
+      startIndexFound = false;
+      startDate = new Date(startDate);
+      endDate = new Date(endDate);
+      console.log(startDate)
+      startDate = startDate.toISOString();
+      console.log(startDate)
+      endDate = endDate.toISOString();
 
-        allChangesPerCommit = [];
-        //convert csvChanges (object) into an array
-        allChangesPerCommit = Object.values(csvChanges);
-        allChangesPerCommit = csvChanges.map(function(item){return item['Total_Changes_per_Commit']});
-        allChangesPerCommit = allChangesPerCommit.map(str => { return Number(str);})
-        console.log(allChangesPerCommit)
+      startDateIndex = 0;
+      endDateIndex = 0;
 
-        //get indexes which are in an array
-        //let temp = getIndexes()
-        //startDateIndex = temp[0];
-        //endDateIndex = temp[1];
+      //get index of first date in month, and index of last date in month
+      //from list of dates. Then use both those indexes as indexes for
+      //the other two lists as they share lengths. 
 
-        //console.log(startDateIndex)
+      //console.log(allDates.length)
+      //console.log(allDates[0])
 
-        listOfContributorsInMonth = [];
-        allLogins = allLogins.slice(startDateIndex, endDateIndex);
-        allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex);
-        
+      //date = new Date("2022-07-03")
+      //date = date.toISOString();
+      //console.log(date)
+
+
+      for (let i = 0; i < allDates.length; i++) {
+
+        if (allDates[i] >= startDate && startIndexFound == false && allDates[i] <= endDate) { //or error here
+          startDateIndex = i;
+          startIndexFound = true;
+
+        } else if (allDates[i] > startDate && allDates[i] <= endDate) {
+
+          endDateIndex = i + 1;
+        }
+
+      }
+      //console.log(startDateIndex, endDateIndex);
+      //return [startDateIndex, endDateIndex];
+
+
+      //data set of logins that made commits includes duplicates
+      d3.csv("http://localhost:8000/data3.csv", function (csvLogins) {
+
+        allLogins = [];
+        //convert csvLogins (object) into an array
+        allLogins = Object.values(csvLogins);
+        allLogins = csvLogins.map(function (item) { return item['Commit_Logins'] });
+
         console.log(allLogins)
-        console.log(allChangesPerCommit)
 
-        //convert to set to remove duplicates
-        //then get size of this set
-        //size of set = number of contributors in month = pieces of pie
-        //set3 = list of logins with no duplicates
-        let set3 = new Set(allLogins);
-        numberOfContributorsInMonth = set3.size;
-        console.log(set3);
-        console.log(numberOfContributorsInMonth);
+        //data set of just total changes per commit
+        d3.csv("http://localhost:8000/data4.csv", function (csvChanges) {
 
-        //ABOVE CODE MIGHT NOT WORK
-        //GO THROUGH ALL LOGINS AND REMOVE DUPLICATES AND GET SIZE
-//////
-        //create 2d array of logins and total changes (w/ duplicates)
-        //LENGTH COULD BE AN ERROR
-        let loginAndChanges = [];
-        for (let i = 0; i < allLogins.length; i++) {
-          loginAndChanges.push([allLogins[i], allChangesPerCommit[i]]);
-        }
+          allChangesPerCommit = [];
+          //convert csvChanges (object) into an array
+          allChangesPerCommit = Object.values(csvChanges);
+          allChangesPerCommit = csvChanges.map(function (item) { return item['Total_Changes_per_Commit'] });
+          allChangesPerCommit = allChangesPerCommit.map(str => { return Number(str); })
+          console.log(allChangesPerCommit)
 
-        console.log(loginAndChanges)
+          //get indexes which are in an array
+          //let temp = getIndexes()
+          //startDateIndex = temp[0];
+          //endDateIndex = temp[1];
 
-        //fill an array with zeros the same length as 
-        n = set3.size;
-        let zeroes = new Array(n); for(let i=0; i<n;i++) zeroes[i]=0;
-        console.log(zeroes)   
-        
-        arraySet3 = Array.from(set3);
-        console.log(arraySet3)
-        
-        //create 2d array of logins with duplicates, paired with 0s
-        loginAndChangesNoDup = [];
-        for (let j = 0; j < arraySet3.length; j++) {
-         loginAndChangesNoDup.push([arraySet3[j] , zeroes[j]]);
-   
-        }
-        
-        //incase thers only 1 user who made a commit in a month
-        //avoids making a 1d Array
-        loginAndChangesNoDup.push(["notUser", zeroes["0"]]);
+          //console.log(startDateIndex)
 
-        //returning allLogins doubled?
-        console.log(loginAndChangesNoDup)
+          listOfContributorsInMonth = [];
+          allLogins = allLogins.slice(startDateIndex, endDateIndex);
+          allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex);
 
-        //to get rid of last entry
-        newLength = loginAndChangesNoDup.length -1 
-        //compare the two 2d arrays,
-        //get duplicates and add them to the nodup version
-        for (var i = 0; i < newLength; i++) {
+          console.log(allLogins)
+          console.log(allChangesPerCommit)
 
-          for (var j = 0; j < loginAndChanges.length; j++) {
+          //convert to set to remove duplicates
+          //then get size of this set
+          //size of set = number of contributors in month = pieces of pie
+          //set3 = list of logins with no duplicates
+          let set3 = new Set(allLogins);
+          numberOfContributorsInMonth = set3.size;
+          console.log(set3);
+          console.log(numberOfContributorsInMonth);
 
-            if (loginAndChangesNoDup[i][0] == loginAndChanges[j][0]) {
-              
-              console.log("user found itself")
-              //take only number from 2d array index is 1
-              temp = loginAndChanges[0,j]
-              //console.log(temp)
-              temp = temp.slice(1)
-              temp = temp.toString();
-              temp = parseInt(temp)
-              console.log(temp) //this is number
-              
-              tempAdd = loginAndChangesNoDup[0,i]
-              
-              tempAdd = tempAdd.slice(1)
-              tempAdd = tempAdd.toString();
-              tempAdd = parseInt(tempAdd)
-              console.log(tempAdd)
+          //ABOVE CODE MIGHT NOT WORK
+          //GO THROUGH ALL LOGINS AND REMOVE DUPLICATES AND GET SIZE
+          //////
+          //create 2d array of logins and total changes (w/ duplicates)
+          //LENGTH COULD BE AN ERROR
+          let loginAndChanges = [];
+          for (let i = 0; i < allLogins.length; i++) {
+            loginAndChanges.push([allLogins[i], allChangesPerCommit[i]]);
+          }
 
-              tempAdd = tempAdd + temp
-              console.log(tempAdd)
+          console.log(loginAndChanges)
 
-             loginAndChangesNoDup[i][1] = tempAdd
+          //fill an array with zeros the same length as 
+          n = set3.size;
+          let zeroes = new Array(n); for (let i = 0; i < n; i++) zeroes[i] = 0;
+          console.log(zeroes)
+
+          arraySet3 = Array.from(set3);
+          console.log(arraySet3)
+
+          //create 2d array of logins with duplicates, paired with 0s
+          loginAndChangesNoDup = [];
+          for (let j = 0; j < arraySet3.length; j++) {
+            loginAndChangesNoDup.push([arraySet3[j], zeroes[j]]);
+
+          }
+
+          //incase thers only 1 user who made a commit in a month
+          //avoids making a 1d Array
+          loginAndChangesNoDup.push(["notUser", zeroes["0"]]);
+
+          //returning allLogins doubled?
+          console.log(loginAndChangesNoDup)
+
+          //to get rid of last entry
+          newLength = loginAndChangesNoDup.length - 1
+          //compare the two 2d arrays,
+          //get duplicates and add them to the nodup version
+          for (var i = 0; i < newLength; i++) {
+
+            for (var j = 0; j < loginAndChanges.length; j++) {
+
+              if (loginAndChangesNoDup[i][0] == loginAndChanges[j][0]) {
+
+                console.log("user found itself")
+                //take only number from 2d array index is 1
+                temp = loginAndChanges[0, j]
+                //console.log(temp)
+                temp = temp.slice(1)
+                temp = temp.toString();
+                temp = parseInt(temp)
+                console.log(temp) //this is number
+
+                tempAdd = loginAndChangesNoDup[0, i]
+
+                tempAdd = tempAdd.slice(1)
+                tempAdd = tempAdd.toString();
+                tempAdd = parseInt(tempAdd)
+                console.log(tempAdd)
+
+                tempAdd = tempAdd + temp
+                console.log(tempAdd)
+
+                loginAndChangesNoDup[i][1] = tempAdd
+              }
             }
           }
-        }
 
-      var loginNames = loginAndChangesNoDup.map(function (tuple) { return tuple[0]; });
-      var totalChangesPerCommiter = loginAndChangesNoDup.map(function (tuple) { return tuple[1]; });
+          var loginNames = loginAndChangesNoDup.map(function (tuple) { return tuple[0]; });
+          var totalChangesPerCommiter = loginAndChangesNoDup.map(function (tuple) { return tuple[1]; });
 
-    
-      console.log(totalChangesPerCommiter)
+
+          console.log(totalChangesPerCommiter)
+
+          finalData = {};
+
+          arraySet3.forEach((element, index) => {
+            finalData[element] = totalChangesPerCommiter[index];
+          })
+
+          console.log(finalData)
+
+//////////////////////////////////////////////////////////////////////////////
+
+        
+
+          // Compute the position of each group on the pie:
+          var pie = d3.pie()
+            .value(function (d) { return d.value; })
+            .sort(function (a, b) { console.log(a); return d3.ascending(a.key, b.key); }) // This make sure that group order remains the same in the pie chart
+          var data_ready = pie(d3.entries(finalData))
+
+          // map to data
+          var u = svg.selectAll("path")
+            .data(data_ready)
+
+          // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+          u
+            .enter()
+            .append('path')
+            .merge(u)
+            .transition()
+            .duration(1000)
+            .attr('d', d3.arc()
+              .innerRadius(0)
+              .outerRadius(radius)
+            )
+            .attr('fill', function (d) { return (color(d.data.key)) })
+            .attr("stroke", "white")
+            .style("stroke-width", "2px")
+            .style("opacity", 1)
+
+          // remove the group that is not present anymore
+          u
+            .exit()
+            .remove()
+
+        });
       });
     });
-});
-return ("nice")
-}
+    return ("nice")
+  }
+
+
 
  //document.write(getDateRange(year,month))    //works
  //document.write(getIndexes(year, month))
-
- document.write(getIndexes(year,month))
+ //document.write(getIndexes(year,month))
 </script>
