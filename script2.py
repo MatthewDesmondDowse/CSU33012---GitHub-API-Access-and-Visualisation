@@ -33,7 +33,7 @@ with open('data.csv', 'w') as f:
         #print(temp)  
         f.write(str(data['All_Commit_Info']))
      
-with open('dog2.csv', 'w', newline="") as f:
+with open('data2.csv', 'w', newline="") as f:
     header = ['Commit_Dates']
     dct = db.githubuser.find()
     writer = csv.writer(f)
