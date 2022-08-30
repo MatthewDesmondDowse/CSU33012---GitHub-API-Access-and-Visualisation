@@ -101,13 +101,13 @@
 
   // set the color scale
   var color = d3.scaleOrdinal()
-  .domain(["a", "b", "c", "d", "e", "f"]) 
-  .range(d3.schemeDark2);
+    .domain(["a", "b", "c", "d", "e", "f"])
+    .range(d3.schemeDark2);
 
-  
+
 
   function getIndexes(x, y) {
- 
+
     //gets data set 2 which only holds the dates
     d3.csv("http://localhost:8000/data2.csv", function (csvDates) {
 
@@ -141,20 +141,24 @@
 
       for (var i = 0; i < allDates.length; i++) {
 
-        if (allDates[i] > startDate && startIndexFound == false && allDates[i] < endDate) { //or error here
+        if (allDates[i] >= startDate && startIndexFound == false && allDates[i] < endDate) { //or error here
           startDateIndex = i;
           startIndexFound = true;
           console.log(startDateIndex)
 
-        }else if (allDates[i] > startDate && allDates[i] < endDate && startDateIndex == true) {
+        }else if (allDates[i] > startDate && allDates[i] < endDate && startIndexFound == true) {
 
           endDateIndex = i; //was +1 
+          console.log(endDateIndex)
         }
-
+        console.log("looop")
       }
-      if(startDateIndex > endDateIndex)
-      {
-        endDateIndex = startDateIndex;
+
+      if (startDateIndex == 0 && endDateIndex == 0 && allDates[0] > startDate && allDates[0] > endDate) {
+        document.write("No data to show as for this timeframe, please refresh the page")
+      }
+      else if(startDateIndex == 0 && endDateIndex == 0 && allDates[0] < startDate && allDates[0] < endDate){
+        document.write("No data to show as for this timeframe, please refresh the page")
       }
       console.log(startDateIndex, endDateIndex);
       //return [startDateIndex, endDateIndex];
@@ -190,15 +194,14 @@
 
           listOfContributorsInMonth = [];
 
-          if(startDateIndex == endDateIndex)
-          {
-            allLogins = allLogins.slice(startDateIndex, endDateIndex+1);
-            allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex+1);
-          }else{
-          allLogins = allLogins.slice(startDateIndex, endDateIndex);
-          allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex);
+          if (startDateIndex == endDateIndex) {
+            allLogins = allLogins.slice(startDateIndex, endDateIndex + 1);
+            allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex + 1);
+          } else {
+            allLogins = allLogins.slice(startDateIndex, endDateIndex);
+            allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex);
           }
-          
+
           console.log(allLogins)
           console.log(allChangesPerCommit)
 
@@ -293,9 +296,9 @@
 
           console.log(finalData)
 
-//////////////////////////////////////////////////////////////////////////////
+          //////////////////////////////////////////////////////////////////////////////
 
-        
+
 
           // Compute the position of each group on the pie:
           var pie = d3.pie()
