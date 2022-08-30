@@ -122,10 +122,13 @@
       startIndexFound = false;
       startDate = new Date(startDate);
       endDate = new Date(endDate);
+      endDate.setDate(endDate.getDate() + 1);
       console.log(startDate)
+      console.log(endDate)
       startDate = startDate.toISOString();
-      console.log(startDate)
       endDate = endDate.toISOString();
+      console.log(startDate)
+      console.log(endDate)
 
       startDateIndex = 0;
       endDateIndex = 0;
@@ -134,27 +137,26 @@
       //from list of dates. Then use both those indexes as indexes for
       //the other two lists as they share lengths. 
 
-      //console.log(allDates.length)
-      //console.log(allDates[0])
+      console.log(allDates.length) //csv not updating?
 
-      //date = new Date("2022-07-03")
-      //date = date.toISOString();
-      //console.log(date)
+      for (var i = 0; i < allDates.length; i++) {
 
-
-      for (let i = 0; i < allDates.length; i++) {
-
-        if (allDates[i] >= startDate && startIndexFound == false && allDates[i] <= endDate) { //or error here
+        if (allDates[i] > startDate && startIndexFound == false && allDates[i] < endDate) { //or error here
           startDateIndex = i;
           startIndexFound = true;
+          console.log(startDateIndex)
 
-        } else if (allDates[i] > startDate && allDates[i] <= endDate) {
+        }else if (allDates[i] > startDate && allDates[i] < endDate && startDateIndex == true) {
 
-          endDateIndex = i + 1;
+          endDateIndex = i; //was +1 
         }
 
       }
-      //console.log(startDateIndex, endDateIndex);
+      if(startDateIndex > endDateIndex)
+      {
+        endDateIndex = startDateIndex;
+      }
+      console.log(startDateIndex, endDateIndex);
       //return [startDateIndex, endDateIndex];
 
 
@@ -183,12 +185,20 @@
           //startDateIndex = temp[0];
           //endDateIndex = temp[1];
 
-          //console.log(startDateIndex)
+          console.log(startDateIndex)
+          console.log(endDateIndex)
 
           listOfContributorsInMonth = [];
+
+          if(startDateIndex == endDateIndex)
+          {
+            allLogins = allLogins.slice(startDateIndex, endDateIndex+1);
+            allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex+1);
+          }else{
           allLogins = allLogins.slice(startDateIndex, endDateIndex);
           allChangesPerCommit = allChangesPerCommit.slice(startDateIndex, endDateIndex);
-
+          }
+          
           console.log(allLogins)
           console.log(allChangesPerCommit)
 
