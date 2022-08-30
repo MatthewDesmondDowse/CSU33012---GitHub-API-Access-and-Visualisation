@@ -2,17 +2,16 @@
 
 #import Github from the PyGithub library
 #from curses.ascii import isdigit
-from datetime import datetime
+#from datetime import datetime
 from urllib import response
 from urllib.request import urlopen
-from github import Github   #GitHub API access
-import json                 
+from github import Github   #GitHub API access               
 import pymongo  
 import requests
-import re
-import datetime
 from faker import Faker
 from collections import defaultdict
+import numpy as np
+
 faker = Faker()
 names = defaultdict(faker.name)
 
@@ -61,7 +60,8 @@ while i <=1 :   #change to 45 later on, issues with api access
 # list 2 of just dates
 # list 3 of just login names
 # list 4 of just total changes
-
+# there are over 4,300+ commits since 2010
+        
 commit_info = []
 commit_info_url ="https://api.github.com/repos/d3/d3/commits" 
 
@@ -78,21 +78,49 @@ for t in sha_list:
     commit_info.append(data5['author']['login'])
     commit_info.append(data5['stats']['total'])
     #print(commit_info)
-    commit_dates.append(data5['commit']['author']['date'])
-    commit_login.append(data5['author']['login'])
-    commit_total_changes.append(data5['stats']['total'])
+    # commit_dates.append(data5['commit']['author']['date'])
+    # commit_login.append(data5['author']['login'])
+    # commit_total_changes.append(data5['stats']['total'])
+    
 
+##get list sorted by date
+N = 3    
+fill = len(commit_info)
+tempList = commit_info + [fill] * N
+subList = [tempList[n:n+N] for n in range(0, len(commit_info), N)]
+
+subList.sort()  
+
+output = []
+def removeNestings(l):
+    for i in l:
+        if type(i) == list:
+            removeNestings(i)
+        else:
+            output.append(i)
+
+removeNestings(subList)
+#print(output)
+
+for i in range (0, len(output), 3):
+    commit_dates.append(output[i])
+    commit_login.append(output[i+1])
+    commit_total_changes.append(output[i+2])
+    
+print(commit_dates)
+print(commit_login)
+print(commit_total_changes)
 ####################################################################
 
 #store info in a dictionary and then into database
 
-dct = {'All_Commit_Info' : commit_info,
-       'Commit_Dates' : commit_dates,
+dct = {'All_Commit_Info' : output,
+        'Commit_Dates' : commit_dates,
        'Commit_Logins' : commit_login,
        'Total_Changes_per_Commit' : commit_total_changes
        }
 
-print("Dictionary is" + json.dumps(dct))
+##print("Dictionary is" + json.dumps(dct))
 
 db.githubuser.insert_many([dct])
 
@@ -137,8 +165,6 @@ db.githubuser.insert_many([dct])
 
 
 ##############################################################################################################
-
-
 
 ###-----------OLD CODE FOR OLD IDEA---------------------###    
 # a = 1
