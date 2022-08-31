@@ -7,9 +7,19 @@
 <!-- Color scale -->
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
-<body style="background-color:#c81616;"> </body>
+<html>
+<head>
+<style>
+  body { font-family: Verdana, sans-serif;}
+  h1 { text-align:center }
+ </style>
+</head>
+</html>
 
-<b style="color:white"> Visualisation of total commits per user, per month in a given year in the d3 repository</b>
+<h1 style="color:white"> GitHub API visualisation of total changes made by a user, in a month, in a given year in the d3 repository </h1>
+
+
+<body style="background-color:#333;"> </body>
 
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
@@ -27,7 +37,6 @@
   <option value="10">October</option>
   <option value="11">November</option>
   <option value="12">December</option>
-
 </select>
 
 <select id="year">
@@ -44,11 +53,14 @@
   <option value="2020">2020</option>
   <option value="2021">2021</option>
   <option value="2022">2022</option>
-
 </select>
 
 <button onclick="getIndexes(document.getElementById('year').value,document.getElementById('month').value)">Get Pie
-  Chart</button>
+  Chart</button> 
+
+  <body>
+    <p style="color:white" id="output"></p>
+  </body>
 
 <script>
 
@@ -150,15 +162,20 @@
 
           endDateIndex = i; //was +1 
           console.log(endDateIndex)
+        }else if(allDates[i] < endDate && startIndexFound == true && endDateIndex == 0 ){
+          endDateIndex = startDateIndex
+          //incase a month only has 1 commit
         }
         //console.log("looop")
       }
 
       if (startDateIndex == 0 && endDateIndex == 0 && allDates[0] > startDate && allDates[0] > endDate) {
-        document.write("No data to show as for this timeframe, please refresh the page")
+        window.alert("No data to show for this timeframe, please select a new timeframe")
+        location.reload()
       }
       else if(startDateIndex == 0 && endDateIndex == 0 && allDates[0] < startDate && allDates[0] < endDate){
-        document.write("No data to show as for this timeframe, please refresh the page")
+        window.alert("No data to show for this timeframe, please select a new timeframe")
+        location.reload()
       }
       console.log(startDateIndex, endDateIndex);
       //return [startDateIndex, endDateIndex];
@@ -214,9 +231,7 @@
           console.log(set3);
           console.log(numberOfContributorsInMonth);
 
-          //ABOVE CODE MIGHT NOT WORK
-          //GO THROUGH ALL LOGINS AND REMOVE DUPLICATES AND GET SIZE
-          //////
+        
           //create 2d array of logins and total changes (w/ duplicates)
           //LENGTH COULD BE AN ERROR
           let loginAndChanges = [];
@@ -296,6 +311,16 @@
 
           console.log(finalData)
 
+          //remove notUser 0 to display 2D array
+          function deleteRow(arr, row) {
+            arr = arr.slice(0);
+            arr.splice(row - 1, 1);
+            return arr;
+         }
+          loginAndChangesNoDup = deleteRow(loginAndChangesNoDup, loginAndChangesNoDup.length)
+          console.log(loginAndChangesNoDup)
+
+          document.getElementById('output').innerHTML = loginAndChangesNoDup
           //////////////////////////////////////////////////////////////////////////////
 
 
