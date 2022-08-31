@@ -31,23 +31,23 @@ with open('data.csv', 'w') as f:
     for data in dct: 
         #temp = data['All_Commit_Info']
         #print(temp)  
-        f.write(str(data['All_Commit_Info']))
+        f.write("nice")
      
-with open('data2.csv', 'w', newline="") as f:
+with open('data2.csv', 'w', newline="", encoding='utf-8') as f:
     header = ['Commit_Dates']
     dct = db.githubuser.find()
     writer = csv.writer(f)
     writer.writerow(header)
     writer.writerows([elt] for elt in data['Commit_Dates'])
         
-with open('data3.csv', 'w', newline="") as f:
+with open('data3.csv', 'w', newline="", encoding='utf-8') as f:
     header = ['Commit_Logins']
     dct = db.githubuser.find()
     writer = csv.writer(f)
     writer.writerow(header)
     writer.writerows([elt] for elt in data['Commit_Logins'])   
           
-with open('data4.csv', 'w', newline="") as f:
+with open('data4.csv', 'w', newline="", encoding='utf-8') as f:
     header = ['Total_Changes_per_Commit']
     dct = db.githubuser.find()
     writer = csv.writer(f)
